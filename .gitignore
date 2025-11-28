@@ -1,31 +1,28 @@
-# =========================
-# OS / IDE
-# =========================
-
-# macOS
+############################
+# OS (macOS)
+############################
 .DS_Store
 .AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+############################
+# IntelliJ IDEA
+############################
 .idea/
 *.iml
+*.iws
+out/
 
-# Eclipse (si jamais)
-.project
-.classpath
-.settings/
-bin/
+# Sonar / autres plugins éventuels
+.sonar/
+.idea_modules/
 
-# VS Code
-.vscode/
-
-# =========================
-# Java / Build
-# =========================
-
-# Compilés
-*.class
-*.log
-
+############################
 # Maven
+############################
 target/
 pom.xml.tag
 pom.xml.releaseBackup
@@ -33,45 +30,40 @@ pom.xml.versionsBackup
 pom.xml.next
 release.properties
 
-# Gradle
-.gradle/
-build/
-out/
+############################
+# Logs & compilés Java
+############################
+*.class
+*.log
+*.tmp
 
-# =========================
-# Config / Secrets
-# =========================
-
+############################
+# Environnements / secrets
+############################
 .env
 *.env.local
 *.env.*.local
-
-# Fichiers de config locaux
 *.local.properties
 
-# =========================
-# Docker / BDD
-# =========================
-
-# Volumes ou données locales
+############################
+# Docker / BDD (si tu ajoutes des volumes locaux)
+############################
 docker-data/
 db-data/
 pgdata/
-
-# Logs conteneurs
 *.pid
 *.pid.lock
 
-# =========================
-# Autres
-# =========================
-
-# Archives
-*.zip
-*.tar
-*.tar.gz
-
-# Sauvegardes éditeur
+############################
+# Éditeurs / backups
+############################
 *~
 *.swp
 *.swo
+
+############################
+# Archives
+############################
+*.zip
+*.tar
+*.tar.gz
