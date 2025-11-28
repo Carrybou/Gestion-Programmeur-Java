@@ -1,10 +1,9 @@
-package org.example.model;
+package org.example.model.projet;
 
 /**
  * Énumération représentant les différents états possibles d'un projet.
  *
- * @author Votre Nom
- * @version 1.0
+
  */
 public enum EtatProjet {
     /**

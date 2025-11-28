@@ -1,4 +1,4 @@
-package org.example.model.Employe;
+package org.example.model.employe;
 
 import java.util.Date;
 
