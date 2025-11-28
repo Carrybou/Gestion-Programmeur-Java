@@ -1,39 +1,77 @@
-target/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
-.kotlin
+# =========================
+# OS / IDE
+# =========================
 
-### IntelliJ IDEA ###
-.idea/modules.xml
-.idea/jarRepositories.xml
-.idea/compiler.xml
-.idea/libraries/
-*.iws
+# macOS
+.DS_Store
+.AppleDouble
+.idea/
 *.iml
-*.ipr
 
-### Eclipse ###
-.apt_generated
-.classpath
-.factorypath
+# Eclipse (si jamais)
 .project
-.settings
-.springBeans
-.sts4-cache
+.classpath
+.settings/
+bin/
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-### VS Code ###
+# VS Code
 .vscode/
 
-### Mac OS ###
-.DS_Store
+# =========================
+# Java / Build
+# =========================
+
+# Compilés
+*.class
+*.log
+
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+
+# Gradle
+.gradle/
+build/
+out/
+
+# =========================
+# Config / Secrets
+# =========================
+
+.env
+*.env.local
+*.env.*.local
+
+# Fichiers de config locaux
+*.local.properties
+
+# =========================
+# Docker / BDD
+# =========================
+
+# Volumes ou données locales
+docker-data/
+db-data/
+pgdata/
+
+# Logs conteneurs
+*.pid
+*.pid.lock
+
+# =========================
+# Autres
+# =========================
+
+# Archives
+*.zip
+*.tar
+*.tar.gz
+
+# Sauvegardes éditeur
+*~
+*.swp
+*.swo
