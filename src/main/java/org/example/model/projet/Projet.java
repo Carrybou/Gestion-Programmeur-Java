@@ -1,5 +1,7 @@
 package org.example.model.projet;
 
+import org.example.model.employe.Employe;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +58,8 @@ public class Projet {
      * Constructeur par défaut.
      * Initialise la liste des programmeurs.
      */
-    public Projet() {
+    public Projet(int id) {
+        this.id = id;
         this.programmeurs = new ArrayList<>();
         this.etat = EtatProjet.EN_ATTENTE;
     }
@@ -73,12 +76,11 @@ public class Projet {
      */
     public Projet(String intitule, LocalDate dateDebut, LocalDate dateFinPrevue,
                   double prix, Employe chefDeProjet) {
-        this();
         this.intitule = intitule;
         this.dateDebut = dateDebut;
         this.dateFinPrevue = dateFinPrevue;
         this.prix = prix;
-        setChefDeProjet(chefDeProjet);
+        //setChefDeProjet(chefDeProjet);
     }
 
     /**
@@ -206,12 +208,12 @@ public class Projet {
      * @param chefDeProjet le nouveau chef de projet
      * @throws IllegalArgumentException si l'employé n'a pas la fonction CHEF_DE_PROJET
      */
-    public void setChefDeProjet(Employe chefDeProjet) {
-        if (chefDeProjet != null && !chefDeProjet.estChefDeProjet()) {
-            throw new IllegalArgumentException("L'employé doit avoir la fonction CHEF_DE_PROJET");
-        }
-        this.chefDeProjet = chefDeProjet;
-    }
+//    public void setChefDeProjet(Employe chefDeProjet) {
+//        if (chefDeProjet != null && !chefDeProjet.estChefDeProjet()) {
+//            throw new IllegalArgumentException("L'employé doit avoir la fonction CHEF_DE_PROJET");
+//        }
+//        this.chefDeProjet = chefDeProjet;
+//    }
 
     /**
      * Retourne la liste des programmeurs assignés au projet.
@@ -239,18 +241,18 @@ public class Projet {
      * @return true si l'ajout a réussi, false sinon
      * @throws IllegalArgumentException si l'employé n'a pas la fonction PROGRAMMEUR
      */
-    public boolean ajouterProgrammeur(Employe programmeur) {
-        if (programmeur == null) {
-            return false;
-        }
-        if (!programmeur.estProgrammeur()) {
-            throw new IllegalArgumentException("L'employé doit avoir la fonction PROGRAMMEUR");
-        }
-        if (!programmeurs.contains(programmeur)) {
-            return programmeurs.add(programmeur);
-        }
-        return false;
-    }
+//    public boolean ajouterProgrammeur(Employe programmeur) {
+//        if (programmeur == null) {
+//            return false;
+//        }
+//        if (!programmeur.estProgrammeur()) {
+//            throw new IllegalArgumentException("L'employé doit avoir la fonction PROGRAMMEUR");
+//        }
+//        if (!programmeurs.contains(programmeur)) {
+//            return programmeurs.add(programmeur);
+//        }
+//        return false;
+//    }
 
     /**
      * Retire un programmeur de l'équipe du projet.
@@ -276,16 +278,16 @@ public class Projet {
      *
      * @return une chaîne de caractères représentant le projet
      */
-    @Override
-    public String toString() {
-        return "Projet{" +
-                "intitule='" + intitule + '\'' +
-                ", dateDebut=" + dateDebut +
-                ", dateFinPrevue=" + dateFinPrevue +
-                ", etat=" + etat +
-                ", prix=" + prix +
-                ", chefDeProjet=" + (chefDeProjet != null ? chefDeProjet.getNomComplet() : "non assigné") +
-                ", nombreProgrammeurs=" + programmeurs.size() +
-                '}';
-    }
+//    @Override
+//    public String toString() {
+//        return "Projet{" +
+//                "intitule='" + intitule + '\'' +
+//                ", dateDebut=" + dateDebut +
+//                ", dateFinPrevue=" + dateFinPrevue +
+//                ", etat=" + etat +
+//                ", prix=" + prix +
+//                ", chefDeProjet=" + (chefDeProjet != null ? chefDeProjet.getNomComplet() : "non assigné") +
+//                ", nombreProgrammeurs=" + programmeurs.size() +
+//                '}';
+//    }
 }
