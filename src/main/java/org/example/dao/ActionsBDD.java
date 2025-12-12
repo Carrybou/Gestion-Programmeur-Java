@@ -127,7 +127,7 @@ public class ActionsBDD implements ActionsBDDInterface {
             ps.setString(6, employe.getEmail());
 
             if (employe.getDate_embauche() != null) {
-                ps.setDate(7, Date.valueOf(employe.getDate_embauche().toString()));
+                ps.setDate(7, new Date(employe.getDate_embauche().getTime()));
             } else {
                 ps.setDate(7, null);
             }

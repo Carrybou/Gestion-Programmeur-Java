@@ -11,7 +11,6 @@ import java.util.List;
  * Un projet possède un intitulé, des dates de début et de fin prévue,
  * un état, un prix, un chef de projet et une équipe de programmeurs.
  *
-
  */
 public class Projet {
     /**
@@ -80,7 +79,9 @@ public class Projet {
         this.dateDebut = dateDebut;
         this.dateFinPrevue = dateFinPrevue;
         this.prix = prix;
-        //setChefDeProjet(chefDeProjet);
+        this.programmeurs = new ArrayList<>();
+        this.etat = EtatProjet.EN_ATTENTE;
+        setChefDeProjet(chefDeProjet);
     }
 
     /**
@@ -100,7 +101,6 @@ public class Projet {
     public void setId(Integer id) {
         this.id = id;
     }
-
 
     /**
      * Retourne l'intitulé du projet.
@@ -208,12 +208,12 @@ public class Projet {
      * @param chefDeProjet le nouveau chef de projet
      * @throws IllegalArgumentException si l'employé n'a pas la fonction CHEF_DE_PROJET
      */
-//    public void setChefDeProjet(Employe chefDeProjet) {
-//        if (chefDeProjet != null && !chefDeProjet.estChefDeProjet()) {
-//            throw new IllegalArgumentException("L'employé doit avoir la fonction CHEF_DE_PROJET");
-//        }
-//        this.chefDeProjet = chefDeProjet;
-//    }
+    public void setChefDeProjet(Employe chefDeProjet) {
+        if (chefDeProjet != null && !chefDeProjet.estChefDeProjet()) {
+            throw new IllegalArgumentException("L'employé doit avoir la fonction CHEF_DE_PROJET");
+        }
+        this.chefDeProjet = chefDeProjet;
+    }
 
     /**
      * Retourne la liste des programmeurs assignés au projet.
@@ -241,18 +241,21 @@ public class Projet {
      * @return true si l'ajout a réussi, false sinon
      * @throws IllegalArgumentException si l'employé n'a pas la fonction PROGRAMMEUR
      */
-//    public boolean ajouterProgrammeur(Employe programmeur) {
-//        if (programmeur == null) {
-//            return false;
-//        }
-//        if (!programmeur.estProgrammeur()) {
-//            throw new IllegalArgumentException("L'employé doit avoir la fonction PROGRAMMEUR");
-//        }
-//        if (!programmeurs.contains(programmeur)) {
-//            return programmeurs.add(programmeur);
-//        }
-//        return false;
-//    }
+    public boolean ajouterProgrammeur(Employe programmeur) {
+        if (programmeur == null) {
+            return false;
+        }
+        if (!programmeur.estProgrammeur()) {
+            throw new IllegalArgumentException("L'employé doit avoir la fonction PROGRAMMEUR");
+        }
+        if (programmeurs == null) {
+            programmeurs = new ArrayList<>();
+        }
+        if (!programmeurs.contains(programmeur)) {
+            return programmeurs.add(programmeur);
+        }
+        return false;
+    }
 
     /**
      * Retire un programmeur de l'équipe du projet.
@@ -261,7 +264,7 @@ public class Projet {
      * @return true si le retrait a réussi, false sinon
      */
     public boolean retirerProgrammeur(Employe programmeur) {
-        return programmeurs.remove(programmeur);
+        return programmeurs != null && programmeurs.remove(programmeur);
     }
 
     /**
@@ -270,7 +273,7 @@ public class Projet {
      * @return le nombre de programmeurs
      */
     public int getNombreProgrammeurs() {
-        return programmeurs.size();
+        return programmeurs != null ? programmeurs.size() : 0;
     }
 
     /**
@@ -278,16 +281,16 @@ public class Projet {
      *
      * @return une chaîne de caractères représentant le projet
      */
-//    @Override
-//    public String toString() {
-//        return "Projet{" +
-//                "intitule='" + intitule + '\'' +
-//                ", dateDebut=" + dateDebut +
-//                ", dateFinPrevue=" + dateFinPrevue +
-//                ", etat=" + etat +
-//                ", prix=" + prix +
-//                ", chefDeProjet=" + (chefDeProjet != null ? chefDeProjet.getNomComplet() : "non assigné") +
-//                ", nombreProgrammeurs=" + programmeurs.size() +
-//                '}';
-//    }
+    @Override
+    public String toString() {
+        return "Projet{" +
+                "intitule='" + intitule + '\'' +
+                ", dateDebut=" + dateDebut +
+                ", dateFinPrevue=" + dateFinPrevue +
+                ", etat=" + etat +
+                ", prix=" + prix +
+                ", chefDeProjet=" + (chefDeProjet != null ? chefDeProjet.getNomComplet() : "non assigné") +
+                ", nombreProgrammeurs=" + (programmeurs != null ? programmeurs.size() : 0) +
+                '}';
+    }
 }
