@@ -1,6 +1,7 @@
 package org.example.model.projet;
 
 import org.example.model.employe.Employe;
+import org.example.model.employe.EmployeTag;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -205,14 +206,14 @@ public class Projet {
      * Définit le chef de projet responsable.
      * Vérifie que l'employé a bien la fonction CHEF_DE_PROJET.
      *
-     * @param chefDeProjet le nouveau chef de projet
+     * @param employe le nouveau chef de projet
      * @throws IllegalArgumentException si l'employé n'a pas la fonction CHEF_DE_PROJET
      */
-    public void setChefDeProjet(Employe chefDeProjet) {
-        if (chefDeProjet != null && !chefDeProjet.estChefDeProjet()) {
+    public void setChefDeProjet(Employe employe) {
+        if (employe != null && employe.getMetier() != EmployeTag.CHEF_PROJET) {
             throw new IllegalArgumentException("L'employé doit avoir la fonction CHEF_DE_PROJET");
         }
-        this.chefDeProjet = chefDeProjet;
+        this.chefDeProjet = employe;
     }
 
     /**
@@ -245,7 +246,7 @@ public class Projet {
         if (programmeur == null) {
             return false;
         }
-        if (!programmeur.estProgrammeur()) {
+        if (programmeur.getMetier() != EmployeTag.PROGRAMMEUR) {
             throw new IllegalArgumentException("L'employé doit avoir la fonction PROGRAMMEUR");
         }
         if (programmeurs == null) {
@@ -289,7 +290,7 @@ public class Projet {
                 ", dateFinPrevue=" + dateFinPrevue +
                 ", etat=" + etat +
                 ", prix=" + prix +
-                ", chefDeProjet=" + (chefDeProjet != null ? chefDeProjet.getNomComplet() : "non assigné") +
+                ", chefDeProjet=" + (chefDeProjet != null ? chefDeProjet.getNom() : "non assigné") +
                 ", nombreProgrammeurs=" + (programmeurs != null ? programmeurs.size() : 0) +
                 '}';
     }
