@@ -213,13 +213,8 @@ public class ActionsBDD implements ActionsBDDInterface {
      * À adapter en fonction des constructeurs / setters réels de ta classe Employe.
      */
     private Employe mapEmploye(ResultSet rs) throws SQLException {
-        Employe employe = new Employe(rs.getInt("id_employe"), rs.getString("nom"), rs.getString("prenom"), rs.getInt("anNaissance"), rs.getFloat("salaire"), rs.getFloat("prime"), rs.getString("email"), rs.getDate("date_embauche"), rs.getBoolean("actif"), EmployeTag.fromCode(rs.getString("code_metier")), rs.getString("adresse"));
 
-
-        employe.setActif(rs.getBoolean("actif"));
-        //employe.setMetier(EmployeTag.fromCode(rs.getString("code_metier")));
-
-        return employe;
+        return new Employe(rs.getInt("id_employe"), rs.getString("nom"), rs.getString("prenom"), rs.getInt("anNaissance"), rs.getFloat("salaire"), rs.getFloat("prime"), rs.getString("email"), rs.getDate("date_embauche"), rs.getBoolean("actif"), EmployeTag.fromCode(rs.getString("code_metier")), rs.getString("adresse"));
     }
 
     /**
