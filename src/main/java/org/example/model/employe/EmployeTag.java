@@ -13,4 +13,14 @@ public enum EmployeTag {
     public String getCode() {
         return code;
     }
+
+    public static EmployeTag fromCode(String code) {
+        for (EmployeTag tag : values()) {
+            if (tag.code.equalsIgnoreCase(code)) {
+                return tag;
+            }
+        }
+        throw new IllegalArgumentException("Unknown code_metier: " + code);
+    }
 }
+

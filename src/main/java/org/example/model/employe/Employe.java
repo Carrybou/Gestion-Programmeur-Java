@@ -16,7 +16,7 @@ public class Employe {
 
 
     // Constructeur Naturel (info depuis la bdd)
-    Employe(int id, String nom, String prenom, int anNaissance, float salaire, float prime, String email, Date date_embauche, boolean actif, EmployeTag code_metier) {
+    public Employe(int id, String nom, String prenom, int anNaissance, float salaire, float prime, String email, Date date_embauche, boolean actif, EmployeTag code_metier) {
         this.id_employe = id;
         this.prenom = prenom;
         this.anNaissance = anNaissance;
