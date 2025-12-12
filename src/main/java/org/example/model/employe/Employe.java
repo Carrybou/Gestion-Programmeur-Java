@@ -1,23 +1,27 @@
 package org.example.model.employe;
 
 import java.util.Date;
+import java.util.List;
 
 public class Employe {
     private final int id_employe;
     private String nom;
     private String prenom;
     private int anNaissance;
+    private String adresse;
     private float salaire;
     private float prime;
     private String email;
+    private Employe responsable;
     private Date date_embauche;
     private boolean actif;
     private EmployeTag metier;
 
 
     // Constructeur Naturel (info depuis la bdd)
-    public Employe(int id, String nom, String prenom, int anNaissance, float salaire, float prime, String email, Date date_embauche, boolean actif, EmployeTag code_metier) {
+    public Employe(int id, String nom, String prenom, int anNaissance, float salaire, float prime, String email, Date date_embauche, boolean actif, EmployeTag code_metier, String adresse) {
         this.id_employe = id;
+        this.nom = nom;
         this.prenom = prenom;
         this.anNaissance = anNaissance;
         this.salaire = salaire;
@@ -26,6 +30,7 @@ public class Employe {
         this.date_embauche = date_embauche;
         this.actif = actif;
         this.metier = code_metier;
+        this.adresse = adresse;
     }
 
     public EmployeTag getMetier() {
@@ -104,7 +109,27 @@ public class Employe {
         this.actif = actif;
     }
 
+    public void setResponsable(Employe employe) {
+        this.responsable = employe;
+    }
 
+    public String getAdresse() { return adresse; }
+
+    public Employe getResponsable() { return responsable; }
+
+    public void afficher() {
+        System.out.println("Id : " + id_employe + "\n");
+        System.out.println("Nom : " + nom + "\n");
+        System.out.println("Prenom : " + prenom + "\n");
+        System.out.println("Adresse : " + adresse + "\n");
+        System.out.println("Naissance : " + anNaissance + "\n");
+        System.out.println("Salaire : " + salaire + "\n");
+        System.out.println("Prime : " + prime + "\n");
+        if(responsable != null) System.out.println("Responsable : " + responsable.getPrenom() + " " + responsable.getNom() + "\n");
+        System.out.println("Metier : " + metier + "\n");
+        System.out.println("--------------------");
+
+    }
 
     // Helpers
     public static Employe findLastHired(Employe[] employes) {
@@ -114,5 +139,13 @@ public class Employe {
         }
 
         return latestHired;
+    }
+
+    public static Employe findEmployeById(int id, List<Employe> employes) {
+        for(Employe employe: employes) {
+            if(employe.id_employe == id) return employe;
+        }
+
+        return null;
     }
 }

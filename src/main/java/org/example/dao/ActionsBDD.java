@@ -21,19 +21,19 @@ public class ActionsBDD implements ActionsBDDInterface {
     // ===============================
 
     private static final String SELECT_ALL_EMPLOYES =
-            "SELECT id_employe, nom, prenom, anNaissance, salaire, prime, email, date_embauche, actif, code_metier " +
+            "SELECT id_employe, nom, prenom, anNaissance, salaire, prime, email, date_embauche, actif, code_metier, adresse " +
                     "FROM employe ORDER BY id_employe";
 
     private static final String SELECT_EMPLOYE_BY_ID =
-            "SELECT id_employe, nom, prenom, anNaissance, salaire, prime, email, date_embauche, actif, code_metier " +
+            "SELECT id_employe, nom, prenom, anNaissance, salaire, prime, email, date_embauche, actif, code_metier, adresse, responsable " +
                     "FROM employe WHERE id_employe = ?";
 
     private static final String DELETE_EMPLOYE_BY_ID =
             "DELETE FROM employe WHERE id_employe = ?";
 
     private static final String INSERT_EMPLOYE =
-            "INSERT INTO employe (nom, prenom, anNaissance, salaire, prime, email, date_embauche, actif, code_metier) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            "INSERT INTO employe (nom, prenom, anNaissance, salaire, prime, email, date_embauche, actif, code_metier, adresse, responsable) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     private static final String UPDATE_SALAIRE_EMPLOYE =
             "UPDATE employe SET salaire = ? WHERE id_employe = ?";
@@ -49,6 +49,8 @@ public class ActionsBDD implements ActionsBDDInterface {
                     "WHERE ep.id_projet = ? " +
                     "ORDER BY e.id_employe";
 
+    private static final String SELECT_ALL_RESPONSABLE_EMPLOYE =
+            "SELECT responsable, id_employe FROM employe ORDER BY id_employe";
     // ===============================
     // Implémentation des méthodes
     // ===============================
@@ -59,10 +61,17 @@ public class ActionsBDD implements ActionsBDDInterface {
 
         try (Connection connection = DatabaseManager.getConnection();
              PreparedStatement ps = connection.prepareStatement(SELECT_ALL_EMPLOYES);
-             ResultSet rs = ps.executeQuery()) {
+             PreparedStatement psr = connection.prepareStatement(SELECT_ALL_RESPONSABLE_EMPLOYE);
+             ResultSet rs = ps.executeQuery();
+             ResultSet rsr = psr.executeQuery()) {
 
             while (rs.next()) {
                 employes.add(mapEmploye(rs));
+            }
+
+            while (rsr.next()) {
+                // check if >= 1 because getInt on null value is equal 0
+                if (rsr.getInt("responsable") >= 1) employes.get(rsr.getInt("id_employe") - 1).setResponsable(Employe.findEmployeById(rsr.getInt("responsable"), employes));
             }
         } catch (SQLException e) {
             throw new Exception("Erreur lors de la récupération de tous les employés", e);
@@ -125,6 +134,10 @@ public class ActionsBDD implements ActionsBDDInterface {
 
             ps.setBoolean(8, employe.isActif());
             ps.setString(9, employe.getMetier().getCode());
+
+            ps.setString(10, employe.getAdresse());
+
+            ps.setInt(11, employe.getResponsable().getId_employe());
 
             int rows = ps.executeUpdate();
             return rows > 0;
@@ -200,11 +213,11 @@ public class ActionsBDD implements ActionsBDDInterface {
      * À adapter en fonction des constructeurs / setters réels de ta classe Employe.
      */
     private Employe mapEmploye(ResultSet rs) throws SQLException {
-        Employe employe = new Employe(rs.getInt("id_employe"), rs.getString("nom"), rs.getString("prenom"), rs.getInt("anNaissance"), rs.getFloat("salaire"), rs.getFloat("prime"), rs.getString("email"), rs.getDate("date_embauche"), rs.getBoolean("actif"), EmployeTag.fromCode(rs.getString("code_metier")));
+        Employe employe = new Employe(rs.getInt("id_employe"), rs.getString("nom"), rs.getString("prenom"), rs.getInt("anNaissance"), rs.getFloat("salaire"), rs.getFloat("prime"), rs.getString("email"), rs.getDate("date_embauche"), rs.getBoolean("actif"), EmployeTag.fromCode(rs.getString("code_metier")), rs.getString("adresse"));
 
 
         employe.setActif(rs.getBoolean("actif"));
-        employe.setMetier(EmployeTag.fromCode(rs.getString("code_metier")));
+        //employe.setMetier(EmployeTag.fromCode(rs.getString("code_metier")));
 
         return employe;
     }
