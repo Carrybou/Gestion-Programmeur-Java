@@ -51,6 +51,7 @@ public class ActionsBDD implements ActionsBDDInterface {
 
     private static final String SELECT_ALL_RESPONSABLE_EMPLOYE =
             "SELECT responsable, id_employe FROM employe ORDER BY id_employe";
+
     // ===============================
     // Implémentation des méthodes
     // ===============================
