@@ -14,7 +14,7 @@ import java.util.Scanner;
 
 public class InterfaceCLI {
 
-    public final ActionsBDD actionsBDD = new ActionsBDD();
+    private final ActionsBDD actionsBDD = new ActionsBDD();
 
     private boolean displayAllEmploye() {
         try {
@@ -73,10 +73,12 @@ public class InterfaceCLI {
 
             // Date conversion
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            LocalDate localDate = LocalDate.parse(dateEmbauche, formatter);
-            Date date = Date.from(
-                    localDate.atStartOfDay(ZoneId.systemDefault()).toInstant()
-            );
+            Date date = null;
+            if (dateEmbauche != null) {
+                LocalDate localDate = LocalDate.parse(dateEmbauche, formatter);
+                date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+            }
+
             boolean ok = actionsBDD.addEmploye(
                     nom,
                     prenom,
@@ -133,7 +135,7 @@ public class InterfaceCLI {
 
             return true;
         } catch (Exception e) {
-            System.out.println("Erreur lors de la récupération des employés : " + e.getMessage());
+            System.out.println("Erreur lors de la récupération des projets : " + e.getMessage());
             return false;
         }
     }
@@ -148,6 +150,23 @@ public class InterfaceCLI {
             }
 
             System.out.println(projet);
+            return true;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
+    private boolean displayListEmployeOfUniqueProjet(int id)
+    {
+        try {
+            Projet projet = actionsBDD.getProjetById(id);
+            if (projet == null) {
+                System.out.println("Aucun projet trouvé avec l'id : " + id);
+                return false;
+            }
+
+            for (Employe employe : projet.getProgrammeurs()) System.out.println(employe);
             return true;
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -202,12 +221,14 @@ public class InterfaceCLI {
                 case 2:
                     System.out.print("Saisissez l'id de l'employé : ");
                     int id2 = clavier.nextInt();
+                    clavier.nextLine();
                     if (!displayUniqueEmploye(id2)) System.out.println("Recherche KO !\n");;
                     break;
 
                 case 3:
                     System.out.print("Saisissez l'id de l'employé à supprimer : ");
                     int id3 = clavier.nextInt();
+                    clavier.nextLine();
                     deleteEmploye(id3);
                     break;
 
@@ -265,7 +286,8 @@ public class InterfaceCLI {
                     int id5 = -1;
 
                     while (cnt >= 0) {
-                        System.out.print("Saisissez l'id de l'employé : ");
+                        int tentative = cnt + 1;
+                        System.out.print("Saisissez l'id de l'employé (" + tentative + " tentative restante) : ");
                         id5 = clavier.nextInt();
                         clavier.nextLine();
 
@@ -297,11 +319,12 @@ public class InterfaceCLI {
                     int id6 = -1;
 
                     while (cnt2 >= 0) {
-                        System.out.print("Saisissez l'id du projet : ");
+                        int tentative = cnt2 + 1;
+                        System.out.print("Saisissez l'id du projet (" + tentative + " tentative restante) : ");
                         id6 = clavier.nextInt();
                         clavier.nextLine();
 
-                        if (displayUniqueProjet(id6))
+                        if (displayListEmployeOfUniqueProjet(id6))
                         {
                             break;
                         };

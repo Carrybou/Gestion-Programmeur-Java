@@ -1,5 +1,8 @@
 package org.example.model.employe;
 
+import org.example.model.projet.Projet;
+
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -13,13 +16,14 @@ public class Employe {
     private float prime;
     private String email;
     private Employe responsable;
-    private Date date_embauche;
+    private LocalDate date_embauche;
     private boolean actif;
     private EmployeTag metier;
+    private List<Projet> projetList;
 
 
-    // Constructeur Naturel (info depuis la bdd)
-    public Employe(int id, String nom, String prenom, int anNaissance, float salaire, float prime, String email, Date date_embauche, boolean actif, EmployeTag code_metier, String adresse) {
+    // Constructeur Naturel
+    public Employe(int id, String nom, String prenom, int anNaissance, float salaire, float prime, String email, LocalDate date_embauche, boolean actif, EmployeTag code_metier, String adresse, List<Projet> projetList) {
         this.id_employe = id;
         this.nom = nom;
         this.prenom = prenom;
@@ -31,6 +35,12 @@ public class Employe {
         this.actif = actif;
         this.metier = code_metier;
         this.adresse = adresse;
+        this.projetList = projetList;
+    }
+
+    public Employe(int id_employe)
+    {
+        this.id_employe = id_employe;
     }
 
     public EmployeTag getMetier() {
@@ -93,11 +103,12 @@ public class Employe {
         this.email = email;
     }
 
-    public Date getDate_embauche() {
+    public LocalDate getDate_embauche() {
         return date_embauche;
     }
 
-    public void setDate_embauche(Date date_embauche) {
+    public void setDate_embauche(LocalDate date_embauche)
+    {
         this.date_embauche = date_embauche;
     }
 
@@ -117,6 +128,18 @@ public class Employe {
 
     public Employe getResponsable() { return responsable; }
 
+    public void setAdresse(String adresse) {
+        this.adresse = adresse;
+    }
+
+    public List<Projet> getProjetList() {
+        return projetList;
+    }
+
+    public void setProjetList(List<Projet> projetList) {
+        this.projetList = projetList;
+    }
+
     @Override
     public String toString() {
         return "Id : " + id_employe + " \n"
@@ -124,10 +147,21 @@ public class Employe {
          + "Prenom : " + prenom + " \n"
          + "Adresse : " + adresse + " \n"
          + "Naissance : " + anNaissance + " \n"
-         + "Salaire : " + salaire + " \n"
-         + "Prime : " + prime + " \n"
-         + "Responsable : " + (responsable != null ? responsable.getPrenom() + " " + responsable.getNom() : "") + " \n"
+         + "Salaire : " + salaire + "€ \n"
+         + "Prime : " + prime + "€ \n"
+         + "Responsable : " + (responsable != null ? responsable.getPrenom() + " " + responsable.getNom() : "aucun") + " \n"
          + "Metier : " + metier + " \n"
+                + "Date d'embauche : " + (date_embauche != null ? date_embauche: "null") + " \n"
+                + "Email : " + email + " \n"
+                + "Actif : " + actif + " \n"
+                + "Liste des projets : " +
+                (projetList == null || projetList.isEmpty()
+                        ? "aucun"
+                        : projetList.stream()
+                        .map(Projet::getIntitule)
+                        .reduce((a, b) -> a + ", " + b)
+                        .orElse("aucun")
+                ) + " \n"
          + "--------------------";
     }
 
@@ -136,14 +170,6 @@ public class Employe {
     }
 
     // Helpers
-    public static Employe findLastHired(Employe[] employes) {
-        Employe latestHired = employes[0];
-        for(Employe employe : employes) {
-            latestHired = latestHired.date_embauche.after(employe.date_embauche) ? latestHired : employe;
-        }
-
-        return latestHired;
-    }
 
     public static Employe findEmployeById(int id, List<Employe> employes) {
         for(Employe employe: employes) {

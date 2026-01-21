@@ -21,7 +21,7 @@ public class ActionsBDD implements ActionsBDDInterface {
     // ===============================
 
     private static final String SELECT_ALL_EMPLOYES =
-            "SELECT id_employe, nom, prenom, anNaissance, salaire, prime, email, date_embauche, actif, code_metier, adresse " +
+            "SELECT id_employe, nom, prenom, anNaissance, salaire, prime, email, date_embauche, actif, code_metier, adresse, responsable " +
                     "FROM employe ORDER BY id_employe";
 
     private static final String SELECT_EMPLOYE_BY_ID =
@@ -49,6 +49,24 @@ public class ActionsBDD implements ActionsBDDInterface {
     private static final String SELECT_ALL_RESPONSABLE_EMPLOYE =
             "SELECT responsable, id_employe FROM employe ORDER BY id_employe";
 
+    private static final String SELECT_EMPLOYES_BY_PROJET_ID =
+            "SELECT e.id_employe, e.nom, e.prenom, e.anNaissance, e.salaire, e.prime, " +
+                    "       e.email, e.date_embauche, e.actif, e.code_metier, e.adresse, e.responsable " +
+                    "FROM employe e " +
+                    "JOIN employe_projet ep ON ep.id_employe = e.id_employe " +
+                    "WHERE ep.id_projet = ? " +
+                    "ORDER BY e.id_employe";
+
+
+    private static final String SELECT_PROJETS_BY_EMPLOYE_ID =
+            "SELECT p.id_projet, p.intitule, p.date_debut, p.date_fin_prevue, p.etat, p.prix, p.id_chef_de_projet " +
+                    "FROM projet p " +
+                    "JOIN employe_projet ep ON ep.id_projet = p.id_projet " +
+                    "WHERE ep.id_employe = ? " +
+                    "ORDER BY p.id_projet";
+
+
+
     // ===============================
     // Implémentation des méthodes
     // ===============================
@@ -59,18 +77,12 @@ public class ActionsBDD implements ActionsBDDInterface {
 
         try (Connection connection = DatabaseManager.getConnection();
              PreparedStatement ps = connection.prepareStatement(SELECT_ALL_EMPLOYES);
-             PreparedStatement psr = connection.prepareStatement(SELECT_ALL_RESPONSABLE_EMPLOYE);
-             ResultSet rs = ps.executeQuery();
-             ResultSet rsr = psr.executeQuery()) {
+             ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 employes.add(mapEmploye(rs));
             }
 
-            while (rsr.next()) {
-                // check if >= 1 because getInt on null value is equal 0
-                if (rsr.getInt("responsable") >= 1) employes.get(rsr.getInt("id_employe") - 1).setResponsable(Employe.findEmployeById(rsr.getInt("responsable"), employes));
-            }
         } catch (SQLException e) {
             throw new Exception("Erreur lors de la récupération de tous les employés", e);
         }
@@ -200,6 +212,42 @@ public class ActionsBDD implements ActionsBDDInterface {
         }
     }
 
+    public List<Employe> getEmployesByProjetId(int idProjet) throws SQLException {
+        List<Employe> employes = new ArrayList<>();
+
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement ps = connection.prepareStatement(SELECT_EMPLOYES_BY_PROJET_ID)) {
+
+            ps.setInt(1, idProjet);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    employes.add(mapEmployeLight(rs)); // ✅ light => pas de récursivité
+                }
+            }
+            return employes;
+        }
+    }
+
+    public List<Projet> getProjetsByEmployeId(int idEmploye) throws SQLException {
+        List<Projet> projets = new ArrayList<>();
+
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement ps = connection.prepareStatement(SELECT_PROJETS_BY_EMPLOYE_ID)) {
+
+            ps.setInt(1, idEmploye);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    projets.add(mapProjetLight(rs)); // ✅ light => pas de récursivité
+                }
+            }
+        }
+        return projets;
+    }
+
+
+
     // ===============================
     // Méthodes de mapping
     // ===============================
@@ -209,9 +257,69 @@ public class ActionsBDD implements ActionsBDDInterface {
      * À adapter en fonction des constructeurs / setters réels de ta classe Employe.
      */
     private Employe mapEmploye(ResultSet rs) throws SQLException {
+        Employe employe = new Employe(rs.getInt("id_employe"));
 
-        return new Employe(rs.getInt("id_employe"), rs.getString("nom"), rs.getString("prenom"), rs.getInt("anNaissance"), rs.getFloat("salaire"), rs.getFloat("prime"), rs.getString("email"), rs.getDate("date_embauche"), rs.getBoolean("actif"), EmployeTag.fromCode(rs.getString("code_metier")), rs.getString("adresse"));
+        employe.setNom(rs.getString("nom"));
+        employe.setPrenom(rs.getString("prenom"));
+        employe.setAnNaissance(rs.getInt("anNaissance"));
+        employe.setSalaire(rs.getFloat("salaire"));
+        employe.setPrime(rs.getFloat("prime"));
+        employe.setEmail(rs.getString("email"));
+
+        Date sqlDate = rs.getDate("date_embauche");
+        if (sqlDate != null) {
+            employe.setDate_embauche(sqlDate.toLocalDate());
+        } else {
+            employe.setDate_embauche(null);
+        }
+
+        employe.setAdresse(rs.getString("adresse"));
+
+        employe.setActif(rs.getBoolean("actif"));
+
+        employe.setMetier(EmployeTag.fromCode(rs.getString("code_metier")));
+
+        Integer responsableId = rs.getObject("responsable", Integer.class);
+        if (responsableId != null) {
+            try {
+                employe.setResponsable(getEmployeById(responsableId)); // simple (fait une requête)
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            employe.setResponsable(null);
+        }
+
+        employe.setProjetList(getProjetsByEmployeId(rs.getInt("id_employe")));
+
+        return employe;
     }
+
+    private Employe mapEmployeLight(ResultSet rs) throws SQLException {
+        Employe employe = new Employe(rs.getInt("id_employe"));
+
+        employe.setNom(rs.getString("nom"));
+        employe.setPrenom(rs.getString("prenom"));
+        employe.setAnNaissance(rs.getInt("anNaissance"));
+        employe.setSalaire(rs.getFloat("salaire"));
+        employe.setPrime(rs.getFloat("prime"));
+        employe.setEmail(rs.getString("email"));
+
+        Date sqlDate = rs.getDate("date_embauche");
+        employe.setDate_embauche(sqlDate != null ? sqlDate.toLocalDate() : null);
+
+        employe.setAdresse(rs.getString("adresse"));
+        employe.setActif(rs.getBoolean("actif"));
+        employe.setMetier(EmployeTag.fromCode(rs.getString("code_metier")));
+
+        // ❌ ne pas hydrater les relations ici
+        employe.setResponsable(null);
+        employe.setProjetList(new ArrayList<>());
+
+        return employe;
+    }
+
+
 
     /**
      * Construit un objet Projet à partir d'un ResultSet.
@@ -237,11 +345,38 @@ public class ActionsBDD implements ActionsBDDInterface {
 
         projet.setPrix(rs.getDouble("prix"));
 
-        try {
-            projet.setChefDeProjet(getEmployeById(rs.getInt("id_chef_de_projet")));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        Integer chefId = rs.getObject("id_chef_de_projet", Integer.class);
+        if (chefId != null) {
+            try {
+                projet.setChefDeProjet(getEmployeById(chefId));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            projet.setChefDeProjet(null);
         }
+
+        projet.setProgrammeurs(getEmployesByProjetId(rs.getInt("id_projet")));
+
+        return projet;
+    }
+
+    private Projet mapProjetLight(ResultSet rs) throws SQLException {
+        Projet projet = new Projet(rs.getInt("id_projet"));
+
+        projet.setIntitule(rs.getString("intitule"));
+
+        Date dateDebut = rs.getDate("date_debut");
+        projet.setDateDebut(dateDebut != null ? dateDebut.toLocalDate() : null);
+
+        Date dateFinPrevue = rs.getDate("date_fin_prevue");
+        projet.setDateFinPrevue(dateFinPrevue != null ? dateFinPrevue.toLocalDate() : null);
+
+        projet.setEtat(EtatProjet.valueOf(rs.getString("etat")));
+        projet.setPrix(rs.getDouble("prix"));
+
+        // ❌ surtout pas : setChefDeProjet(...) ici
+        projet.setChefDeProjet(null);
 
         return projet;
     }

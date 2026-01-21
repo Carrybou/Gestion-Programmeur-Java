@@ -4,17 +4,19 @@ import org.example.model.employe.Employe;
 import org.example.model.employe.EmployeTag;
 import org.example.model.projet.Projet;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 public interface ActionsBDDInterface {
 
     /**
-     * Afficher tous les employés.
+     * Récupérer tous les employés.
      */
     List<Employe> getAllEmployes() throws Exception;
 
     /**
-     * Afficher un employé par son id.
+     * Récupérer un employé par son id.
      */
     Employe getEmployeById(int idEmploye) throws Exception;
 
@@ -40,12 +42,19 @@ public interface ActionsBDDInterface {
     boolean updateSalaireEmploye(int idEmploye, float nouveauSalaire) throws Exception;
 
     /**
-     * Afficher la liste de tous les projets.
+     * Récupérer la liste de tous les projets.
      */
     List<Projet> getAllProjets() throws Exception;
 
     /**
-     * Afficher un projet par son id.
+     * Récupérer un projet par son id.
      */
     Projet getProjetById(int idProjet) throws Exception;
+
+    /**
+     * Récupérer une liste d'employé par l'id d'un projet.
+     */
+    //List<Employe> getEmployesByProjetId(int idProjet) throws Exception;
+
+    List<Projet> getProjetsByEmployeId(int idEmploye) throws SQLException;
 }

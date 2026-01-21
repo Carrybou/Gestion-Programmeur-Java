@@ -290,8 +290,15 @@ public class Projet {
                 + "Date Fin Prevue : " + dateFinPrevue + " \n"
                 + "Prix : " + prix + " \n"
                 + "ChefDeProjet : " + chefDeProjet.toStringSmall() + " \n"
-                + "Programmeurs : " + programmeurs + " \n"
                 + "Etat : " + etat + " \n"
+                + "Liste des programmeurs : " +
+                (programmeurs == null || programmeurs.isEmpty()
+                        ? "aucun"
+                        : programmeurs.stream()
+                        .map(Employe::getNom)
+                        .reduce((a, b) -> a + ", " + b)
+                        .orElse("aucun")
+                ) + " \n"
                 + "--------------------";
     }
 
