@@ -284,14 +284,15 @@ public class Projet {
      */
     @Override
     public String toString() {
-        return "Projet{" +
-                "intitule='" + intitule + '\'' +
-                ", dateDebut=" + dateDebut +
-                ", dateFinPrevue=" + dateFinPrevue +
-                ", etat=" + etat +
-                ", prix=" + prix +
-                ", chefDeProjet=" + (chefDeProjet != null ? chefDeProjet.getNom() : "non assigné") +
-                ", nombreProgrammeurs=" + (programmeurs != null ? programmeurs.size() : 0) +
-                '}';
+        return "Id : " + id + " \n"
+                + "Intitule : " + intitule + " \n"
+                + "Date Debut : " + dateDebut + " \n"
+                + "Date Fin Prevue : " + dateFinPrevue + " \n"
+                + "Prix : " + prix + " \n"
+                + "ChefDeProjet : " + chefDeProjet.toStringSmall() + " \n"
+                + "Programmeurs : " + programmeurs + " \n"
+                + "Etat : " + etat + " \n"
+                + "--------------------";
     }
+
 }

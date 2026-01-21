@@ -39,15 +39,12 @@ public class ActionsBDD implements ActionsBDDInterface {
             "UPDATE employe SET salaire = ? WHERE id_employe = ?";
 
     private static final String SELECT_ALL_PROJETS =
-            "SELECT id_projet, intitule, date_debut, date_fin_prevue, etat " +
+            "SELECT id_projet, intitule, date_debut, date_fin_prevue, etat, prix, id_chef_de_projet " +
                     "FROM projet ORDER BY id_projet";
 
-    private static final String SELECT_EMPLOYES_BY_PROJET =
-            "SELECT e.id_employe, e.nom, e.prenom, e.anNaissance, e.salaire, e.prime, e.email, e.date_embauche, e.actif, e.code_metier " +
-                    "FROM employe e " +
-                    "JOIN employe_projet ep ON e.id_employe = ep.id_employe " +
-                    "WHERE ep.id_projet = ? " +
-                    "ORDER BY e.id_employe";
+    private static final String SELECT_PROJET_BY_ID =
+            "SELECT id_projet, intitule, date_debut, date_fin_prevue, etat, prix, id_chef_de_projet " +
+                    "FROM projet WHERE id_projet = ?";
 
     private static final String SELECT_ALL_RESPONSABLE_EMPLOYE =
             "SELECT responsable, id_employe FROM employe ORDER BY id_employe";
@@ -184,25 +181,23 @@ public class ActionsBDD implements ActionsBDDInterface {
     }
 
     @Override
-    public List<Employe> getEmployesByProjet(int idProjet) throws Exception {
-        List<Employe> employes = new ArrayList<>();
+    public Projet getProjetById(int idProjet) throws Exception {
 
         try (Connection connection = DatabaseManager.getConnection();
-             PreparedStatement ps = connection.prepareStatement(SELECT_EMPLOYES_BY_PROJET)) {
+             PreparedStatement ps = connection.prepareStatement(SELECT_PROJET_BY_ID)) {
 
             ps.setInt(1, idProjet);
 
             try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    employes.add(mapEmploye(rs));
+                if (rs.next()) {
+                    return mapProjet(rs);
+                } else {
+                    return null; // à gérer dans le Menu : "id non trouvé"
                 }
             }
-
         } catch (SQLException e) {
-            throw new Exception("Erreur lors de la récupération des employés pour le projet " + idProjet, e);
+            throw new Exception("Erreur lors de la récupération du projet avec l'id " + idProjet, e);
         }
-
-        return employes;
     }
 
     // ===============================
@@ -239,6 +234,14 @@ public class ActionsBDD implements ActionsBDDInterface {
         }
 
         projet.setEtat(EtatProjet.valueOf(rs.getString("etat")));
+
+        projet.setPrix(rs.getDouble("prix"));
+
+        try {
+            projet.setChefDeProjet(getEmployeById(rs.getInt("id_chef_de_projet")));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         return projet;
     }
