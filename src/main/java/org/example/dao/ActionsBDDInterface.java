@@ -45,7 +45,7 @@ public interface ActionsBDDInterface {
     List<Projet> getAllProjets() throws Exception;
 
     /**
-     * Obtenir la liste des employés qui travaillent sur un même projet.
+     * Afficher un projet par son id.
      */
-    List<Employe> getEmployesByProjet(int idProjet) throws Exception;
+    Projet getProjetById(int idProjet) throws Exception;
 }

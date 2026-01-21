@@ -117,18 +117,22 @@ public class Employe {
 
     public Employe getResponsable() { return responsable; }
 
-    public void afficher() {
-        System.out.println("Id : " + id_employe + "\n");
-        System.out.println("Nom : " + nom + "\n");
-        System.out.println("Prenom : " + prenom + "\n");
-        System.out.println("Adresse : " + adresse + "\n");
-        System.out.println("Naissance : " + anNaissance + "\n");
-        System.out.println("Salaire : " + salaire + "\n");
-        System.out.println("Prime : " + prime + "\n");
-        if(responsable != null) System.out.println("Responsable : " + responsable.getPrenom() + " " + responsable.getNom() + "\n");
-        System.out.println("Metier : " + metier + "\n");
-        System.out.println("--------------------");
+    @Override
+    public String toString() {
+        return "Id : " + id_employe + " \n"
+         + "Nom : " + nom + " \n"
+         + "Prenom : " + prenom + " \n"
+         + "Adresse : " + adresse + " \n"
+         + "Naissance : " + anNaissance + " \n"
+         + "Salaire : " + salaire + " \n"
+         + "Prime : " + prime + " \n"
+         + "Responsable : " + (responsable != null ? responsable.getPrenom() + " " + responsable.getNom() : "") + " \n"
+         + "Metier : " + metier + " \n"
+         + "--------------------";
+    }
 
+    public String toStringSmall() {
+        return nom + " " +  prenom;
     }
 
     // Helpers

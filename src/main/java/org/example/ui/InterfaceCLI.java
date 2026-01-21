@@ -3,6 +3,7 @@ package org.example.ui;
 import org.example.dao.ActionsBDD;
 import org.example.model.employe.Employe;
 import org.example.model.employe.EmployeTag;
+import org.example.model.projet.Projet;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -24,7 +25,7 @@ public class InterfaceCLI {
             }
 
             for (Employe employe : employeList) {
-                employe.afficher();
+                System.out.println(employe);
             }
             return true;
 
@@ -42,7 +43,7 @@ public class InterfaceCLI {
                 return false;
             }
 
-            employe.afficher();
+            System.out.println(employe);
             return true;
 
         } catch (Exception e) {
@@ -114,20 +115,73 @@ public class InterfaceCLI {
         }
     }
 
+    private boolean displayAllProjets()
+    {
+        try {
+            List<Projet> projetList = getAllProjets();
+
+            if (projetList == null || projetList.isEmpty())
+            {
+                System.out.println("Aucun projet trouvé.");
+                return true;
+            }
+
+            for (Projet projet : projetList)
+            {
+                System.out.println(projet.toString());
+            }
+
+            return true;
+        } catch (Exception e) {
+            System.out.println("Erreur lors de la récupération des employés : " + e.getMessage());
+            return false;
+        }
+    }
+
+    private boolean displayUniqueProjet(int id)
+    {
+        try {
+            Projet projet = actionsBDD.getProjetById(id);
+            if (projet == null) {
+                System.out.println("Aucun projet trouvé avec l'id : " + id);
+                return false;
+            }
+
+            System.out.println(projet);
+            return true;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
+    private List<Projet> getAllProjets()
+    {
+        try {
+            return actionsBDD.getAllProjets();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void run() throws Exception {
         Scanner clavier = new Scanner(System.in);
         boolean on = true;
 
         while (on) {
             System.out.println(
-                    "********* MENU *********\n"
-                            + "1. Afficher tous les programmeurs\n"
-                            + "2. Afficher un programmeur\n"
-                            + "3. Supprimer un programmeur\n"
-                            + "4. Ajouter un programmeur\n"
-                            + "5.  Modifier le salaire\n"
-                            + "8. Quitter le programme\n\n"
-                            + "Quel est votre choix ? "
+                    """
+                            ********* MENU *********
+                            1. Afficher tous les programmeurs
+                            2. Afficher un programmeur
+                            3. Supprimer un programmeur
+                            4. Ajouter un programmeur
+                            5. Modifier le salaire
+                            6. Afficher la liste des projets
+                            7. Obtenir la liste des programmeurs qui travaillent sur le même projet
+                            8. Quitter le programme
+                            
+                            Quel est votre choix ?\s"""
             );
 
             int choix;
@@ -207,26 +261,58 @@ public class InterfaceCLI {
                     break;
 
                 case 5:
-                    int cnt = 5;
+                    int cnt = 4; // Limite d'essais
                     int id5 = -1;
 
                     while (cnt >= 0) {
                         System.out.print("Saisissez l'id de l'employé : ");
                         id5 = clavier.nextInt();
                         clavier.nextLine();
-                        if (!displayUniqueEmploye(id5)) System.out.println("Recherche KO !\n");
-                        else {
-                            id5 = -1;
-                            cnt = 0;
+
+                        if (displayUniqueEmploye(id5))
+                        {
+                            break;
                         };
                         cnt--;
                     }
 
+                    if (cnt == -1)
+                    {
+                        System.out.println("Limite atteinte !");
+                        break;
+                    }
 
-                    System.out.print("Saisissez le nouveau salaire de l'employé id : ");
+                    System.out.print("Saisissez le nouveau salaire de l'employé id " + id5 + " : ");
                     float salaireEmploye = clavier.nextFloat();
                     modifyEmployeSalary(id5, salaireEmploye);
                     clavier.nextLine();
+                    break;
+
+                case 6:
+                    if (!displayAllProjets()) System.out.println("Recherche KO !\n");;
+                    break;
+
+                case 7:
+                    int cnt2 = 4; // Limite de 5 essais
+                    int id6 = -1;
+
+                    while (cnt2 >= 0) {
+                        System.out.print("Saisissez l'id du projet : ");
+                        id6 = clavier.nextInt();
+                        clavier.nextLine();
+
+                        if (displayUniqueProjet(id6))
+                        {
+                            break;
+                        };
+                        cnt2--;
+                    }
+
+                    if (cnt2 == -1)
+                    {
+                        System.out.println("Limite atteinte !");
+                        break;
+                    }
                     break;
                 case 8:
                     on = false;
