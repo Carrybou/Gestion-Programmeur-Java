@@ -1,6 +1,7 @@
 package org.example.dao;
 
 import org.example.model.employe.Employe;
+import org.example.model.employe.EmployeTag;
 import org.example.model.projet.Projet;
 
 import java.util.List;
@@ -29,14 +30,14 @@ public interface ActionsBDDInterface {
      *
      * @return true si l'insertion a réussi.
      */
-    boolean addEmploye(Employe employe) throws Exception;
+    boolean addEmploye(String nom, String prenom, int anNaissance, float salaire, float prime, String email, java.util.Date date_embauche, boolean actif, EmployeTag code_metier, String adresse, Employe responsable) throws Exception;
 
     /**
      * Modifier le salaire d’un employé.
      *
      * @return true si la mise à jour a réussi.
      */
-    boolean updateSalaireEmploye(int idEmploye, double nouveauSalaire) throws Exception;
+    boolean updateSalaireEmploye(int idEmploye, float nouveauSalaire) throws Exception;
 
     /**
      * Afficher la liste de tous les projets.

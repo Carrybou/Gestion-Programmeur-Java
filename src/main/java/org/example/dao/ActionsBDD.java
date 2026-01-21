@@ -115,30 +115,30 @@ public class ActionsBDD implements ActionsBDDInterface {
     }
 
     @Override
-    public boolean addEmploye(Employe employe) throws Exception {
+    public boolean addEmploye(String nom, String prenom, int anNaissance, float salaire, float prime, String email, java.util.Date date_embauche, boolean actif, EmployeTag code_metier, String adresse, Employe responsable) throws Exception {
         try (Connection connection = DatabaseManager.getConnection();
              PreparedStatement ps = connection.prepareStatement(INSERT_EMPLOYE)) {
 
             // À adapter aux noms de getters de ta classe Employe
-            ps.setString(1, employe.getNom());
-            ps.setString(2, employe.getPrenom());
-            ps.setInt(3, employe.getAnNaissance());
-            ps.setDouble(4, employe.getSalaire());
-            ps.setDouble(5, employe.getPrime());
-            ps.setString(6, employe.getEmail());
+            ps.setString(1, nom);
+            ps.setString(2, prenom);
+            ps.setInt(3, anNaissance);
+            ps.setDouble(4, salaire);
+            ps.setDouble(5, prime);
+            ps.setString(6, email);
 
-            if (employe.getDate_embauche() != null) {
-                ps.setDate(7, new Date(employe.getDate_embauche().getTime()));
+            if (date_embauche != null) {
+                ps.setDate(7, new Date(date_embauche.getTime()));
             } else {
                 ps.setDate(7, null);
             }
 
-            ps.setBoolean(8, employe.isActif());
-            ps.setString(9, employe.getMetier().getCode());
+            ps.setBoolean(8, actif);
+            ps.setString(9, code_metier.getCode());
 
-            ps.setString(10, employe.getAdresse());
+            ps.setString(10, adresse);
 
-            ps.setInt(11, employe.getResponsable().getId_employe());
+            ps.setInt(11, responsable.getId_employe());
 
             int rows = ps.executeUpdate();
             return rows > 0;
@@ -149,7 +149,7 @@ public class ActionsBDD implements ActionsBDDInterface {
     }
 
     @Override
-    public boolean updateSalaireEmploye(int idEmploye, double nouveauSalaire) throws Exception {
+    public boolean updateSalaireEmploye(int idEmploye, float nouveauSalaire) throws Exception {
         try (Connection connection = DatabaseManager.getConnection();
              PreparedStatement ps = connection.prepareStatement(UPDATE_SALAIRE_EMPLOYE)) {
 
